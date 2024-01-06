@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integral Calculator with Partial Fractions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.6.0/math.min.js"></script>
+</head>
+<body>
+
+    <h1>Integral Calculator with Partial Fractions</h1>
+    
+    <label for="expressionInput">Enter Expression:</label>
+    <input type="text" id="expressionInput" placeholder="Example: (2*x + 1) / (x^2 - 1)" style="width: 300px;">
+    
+    <button onclick="calculateIntegral()">Calculate Integral</button>
+
+    <p id="result"></p>
+
+    <script>
+        function calculateIntegral() {
+            const expression = document.getElementById('expressionInput').value;
+
+            try {
+                const result = integrate(expression);
+                displayResult(result);
+            } catch (error) {
+                displayError(error);
+            }
+        }
+
+        function integrate(expression) {
+            const parsedExpression = math.parse(expression);
+            const simplifiedExpression = math.simplify(parsedExpression);
+            const integral = math.integrate(simplifiedExpression, 'x');
+
+            if (integral.isFraction) {
+                const partialFractions = math.partialFraction(integral);
+                const partialFractionsResult = partialFractions.map(pf => math.integrate(pf, 'x').toString());
+                return `Partial Fractions: ${partialFractionsResult.join(' + ')}`;
+            }
+
+            return `Result: ${integral.toString()}`;
+        }
+
+        function displayResult(result) {
+            document.getElementById('result').innerText = result;
+        }
+
+        function displayError(error) {
+            console.error(error);
+            alert(`Error: ${error}`);
+        }
+    </script>
+
+</body>
+</html>
